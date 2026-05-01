@@ -169,53 +169,71 @@
     </div>
 
     <script>
-        const API_URL = 'https://primeirocens.byethost18.com/auth_api.php';
+    const API_URL = 'https://primeirocens.byethost18.com/auth_api.php';
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
-            if(tabName === 'login') {
-                document.querySelectorAll('.tab')[0].classList.add('active');
-                document.getElementById('form-login-api').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab')[1].classList.add('active');
-                document.getElementById('form-registo-api').classList.add('active');
-            }
+    // Função de Troca de Abas
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+        if(tabName === 'login') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('form-login-api').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('form-registo-api').classList.add('active');
         }
+    }
 
-        document.getElementById('form-login-api').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            formData.append('login', 'true');
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: formData });
-                const data = await res.json();
-                if(data.sucesso) window.location.href = 'https://primeirocens.byethost18.com/painel.php';
-                else alert(data.msg);
-            } catch (err) { alert("Erro de conexão com o servidor."); }
-        });
+    // Login via API
+    document.getElementById('form-login-api').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        formData.append('login', 'true');
+        try {
+            const res = await fetch(API_URL, { method: 'POST', body: formData });
+            const data = await res.json();
+            if(data.sucesso) window.location.href = 'https://primeirocens.byethost18.com/painel.php';
+            else alert(data.msg);
+        } catch (err) { alert("Erro de conexão. O servidor pode estar bloqueando o app."); }
+    });
 
-        document.getElementById('form-registo-api').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            formData.append('cadastrar', 'true');
-            try {
-                const res = await fetch(API_URL, { method: 'POST', body: formData });
-                const data = await res.json();
-                alert(data.msg);
-                if(data.sucesso) switchTab('login');
-            } catch (err) { alert("Erro ao processar cadastro."); }
-        });
+    // Cadastro via API
+    document.getElementById('form-registo-api').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        formData.append('cadastrar', 'true');
+        try {
+            const res = await fetch(API_URL, { method: 'POST', body: formData });
+            const data = await res.json();
+            alert(data.msg);
+            if(data.sucesso) switchTab('login');
+        } catch (err) { alert("Erro ao processar cadastro."); }
+    });
 
-        document.getElementById('btn-theme').addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark-theme');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light');
-        });
+    // Controle do Tema
+    document.getElementById('btn-theme').addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark-theme');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark-theme') ? 'dark' : 'light');
+    });
 
-        window.addEventListener('load', () => {
-            setTimeout(() => { document.getElementById('splash-screen').classList.add('hidden'); }, 2000);
-            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-        });
-    </script>
+    // --- BIZU: REMOÇÃO FORÇADA DA SPLASH SCREEN ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const splash = document.getElementById('splash-screen');
+        
+        // Remove a tela após 1.5 segundos, independente de erros de rede
+        setTimeout(() => {
+            splash.classList.add('hidden');
+            // Pequeno delay extra para garantir que a visibilidade suma após o fade
+            setTimeout(() => { splash.style.display = 'none'; }, 500);
+        }, 1500);
+
+        // Registro do Service Worker (opcional)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {
+                console.log("SW bloqueado pelo host, mas o app segue operando.");
+            });
+        }
+    });
+</script>
 </body>
 </html>
