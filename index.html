@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Acesso - 1º CENS</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="con.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface-color: #ffffff;
+            --primary: #171717; /* Grafite/Preto 5ª Cia */
+            --primary-text: #ffffff;
+            --accent: #ef4444;  
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --input-bg: #f8fafc;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.1);
+            --shadow-float: 0 15px 30px -5px rgba(0,0,0,0.15);
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        html.dark-theme {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --primary: #f8fafc; 
+            --primary-text: #0f172a;
+            --text-main: #f8fafc;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --input-bg: #0b0f19;
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; transition: background-color 0.3s, color 0.3s; position: relative; }
+
+        /* Botão Dark Mode Absoluto */
+        .theme-toggle-wrapper { position: absolute; top: 20px; right: 20px; z-index: 100; }
+        .btn-theme { background: var(--surface-color); border: 1px solid var(--border); color: var(--text-light); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 10px; border-radius: 50%; transition: 0.2s; box-shadow: var(--shadow-sm); }
+        .btn-theme:hover { color: var(--primary); border-color: var(--primary); }
+        html.dark-theme .icon-moon { display: none; }
+        html.dark-theme .icon-sun { display: block; }
+        html:not(.dark-theme) .icon-sun { display: none; }
+
+        .auth-container { width: 100%; max-width: 420px; position: relative; z-index: 10; }
+
+        /* Branding Topo */
+        .brand-header { text-align: center; margin-bottom: 30px; }
+        .brand-header .logo-icon { width: 64px; height: 64px; background: var(--primary); color: var(--primary-text); border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: var(--shadow-md); transition: background-color 0.3s, color 0.3s; }
+        .brand-header h1 { font-size: 24px; font-weight: 900; color: var(--text-main); letter-spacing: -0.5px; text-transform: uppercase; }
+        .brand-header p { font-size: 13px; font-weight: 600; color: var(--text-light); margin-top: 6px; letter-spacing: 0.5px; }
+
+        /* Cartão Principal */
+        .auth-card { background: var(--surface-color); border-radius: 20px; box-shadow: var(--shadow-md); overflow: hidden; border: 1px solid var(--border); transition: background-color 0.3s, border-color 0.3s; }
+
+        /* Separadores (Tabs) */
+        .tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--input-bg); transition: background-color 0.3s, border-color 0.3s; }
+        .tab { flex: 1; padding: 18px 0; text-align: center; font-size: 15px; font-weight: 700; color: var(--text-light); cursor: pointer; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--surface-color); }
+        .tab:hover:not(.active) { color: var(--text-main); }
+
+        /* Formulários */
+        .form-section { padding: 30px 24px; display: none; animation: fadeIn 0.4s ease; }
+        .form-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-group { margin-bottom: 16px; position: relative; }
+        .input-group-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); }
+        
+        /* Estilo do link Esqueci a Senha */
+        .esqueci-senha-link { font-size: 12px; font-weight: 700; color: #3b82f6; text-decoration: none; transition: color 0.2s; }
+        .esqueci-senha-link:hover { color: #2563eb; text-decoration: underline; }
+        html.dark-theme .esqueci-senha-link { color: #60a5fa; }
+        
+        input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 15px; font-weight: 600; color: var(--text-main); outline: none; transition: all 0.3s ease; appearance: none; -webkit-appearance: none; }
+        input:focus, select:focus { background: var(--surface-color); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1); }
+        input::placeholder { color: var(--text-light); font-weight: 500; opacity: 0.7;}
+
+        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; padding-right: 40px; cursor: pointer; }
+
+        .btn-submit { width: 100%; background: var(--primary); color: var(--primary-text); border: 1px solid rgba(0,0,0,0.1); padding: 16px; border-radius: 10px; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s ease; margin-top: 10px; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* Notificação Toast */
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px); padding: 14px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; color: white; box-shadow: var(--shadow-float); z-index: 1000; opacity: 0; pointer-events: none; animation: slideDown 4.5s ease forwards; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .toast.sucesso { background: var(--success); }
+        .toast.erro { background: var(--error); }
+        @keyframes slideDown { 0% { opacity: 0; transform: translateX(-50%) translateY(-20px); } 10% { opacity: 1; transform: translateX(-50%) translateY(0); } 90% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+
+        /* --- TELA DE INTRODUÇÃO (SPLASH SCREEN) --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a; /* Sempre escuro no loading para dar um ar tático */
+            z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        #splash-screen.hidden { opacity: 0; visibility: hidden; }
+
+        .splash-logo {
+            width: 80px; height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 24px;
+            animation: pulseLogo 1.5s ease infinite alternate;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .splash-title { font-size: 26px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin: 0; text-align: center;}
+        .splash-subtitle { font-size: 13px; font-weight: 600; color: #94a3b8; margin-top: 8px; text-transform: uppercase; letter-spacing: 2px;}
+
+        @keyframes pulseLogo {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1); }
+            100% { transform: scale(1.05); box-shadow: 0 0 25px 0 rgba(255, 255, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="splash-screen">
+        <div class="splash-logo">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <h1 class="splash-title">Sistema de<br>Ranking</h1>
+        <p class="splash-subtitle">Carregando OPM...</p>
+    </div>
+
+    <div class="theme-toggle-wrapper">
+        <button id="btn-theme" class="btn-theme" title="Alternar Tema">
+            <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </div>
+
+    <div class="auth-container">
+        <div class="brand-header">
+            <div class="logo-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h1>1º Ciclo de Ensino</h1>
+            <p>Develop By Sd Pm 2ª Cl Elyvelton</p>
+        </div>
+
+        <div class="auth-card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('login')">Entrar</div>
+                <div class="tab" onclick="switchTab('registo')">Cadastro</div>
+            </div>
+
+            <!-- FORMULÁRIO DE LOGIN -->
+            <form id="form-login-api" class="form-section active">
+                <div class="input-group">
+                    <label>E-mail de Acesso</label>
+                    <input type="email" name="email" placeholder="Seu e-mail cadastrado" required>
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" name="senha" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">Acessar o Painel</button>
+            </form>
+
+            <!-- FORMULÁRIO DE CADASTRO -->
+            <form id="form-registo-api" class="form-section">
+                <!-- ... (Mantenha todos os seus inputs de nome, email, senha, cia e pelotão) ... -->
+                <button type="submit" class="btn-submit">Registrar Aluno</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://primeirocens.byethost18.com/auth_api.php';
+
+        // Interceptar Login
+        document.getElementById('form-login-api').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            formData.append('login', 'true');
+            
+            const res = await fetch(API_URL, { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if(data.sucesso) {
+                window.location.href = 'https://primeirocens.byethost18.com/painel.php';
+            } else {
+                alert(data.msg);
+            }
+        });
+
+        // Interceptar Cadastro
+        document.getElementById('form-registo-api').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            formData.append('cadastrar', 'true');
+            
+            const res = await fetch(API_URL, { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            alert(data.msg);
+            if(data.sucesso) switchTab('login');
+        });
+
+        // Mantenha suas funções de switchTab, Dark Mode e Service Worker aqui
+    </script>
+</body>
+</html>

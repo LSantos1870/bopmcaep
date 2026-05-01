@@ -1,0 +1,22 @@
+
+{
+  "name": "Avaliação 1º CENS",
+  "short_name": "Notas CENS",
+  "description": "Sistema de controle de notas e médias",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#171717",
+  "icons": [
+    {
+      "src": "con.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "con.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
